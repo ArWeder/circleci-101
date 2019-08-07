@@ -4,20 +4,16 @@ jobs:
       - image: circleci/circleci-cli
     steps:
       - checkout
+      - compare-url/reconstruct
       - compare-url/use:
-          attach-workspace: true
           custom-logic: |
-
                 echo "COMMIT_RANGE $COMMIT_RANGE"
                 echo "CIRCLE_COMPARE_URL $CIRCLE_COMPARE_URL"
           step-name: Publish modified orbs
 orbs:
-  compare-url: iynere/compare-url@1.2.0
+  compare-url: iynere/compare-url@x.y.z
 version: 2.1
 workflows:
   publish-orbs:
     jobs:
-      - compare-url/reconstruct
-      - publish:
-          requires:
-            - compare-url/reconstruct
+      - publish
