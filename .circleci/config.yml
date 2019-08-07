@@ -4,9 +4,9 @@ jobs:
       - image: circleci/circleci-cli
     steps:
       - checkout
-      - compare-url/reconstruct
       - compare-url/use:
           custom-logic: |
+
                 echo "COMMIT_RANGE $COMMIT_RANGE"
                 echo "CIRCLE_COMPARE_URL $CIRCLE_COMPARE_URL"
           step-name: Publish modified orbs
@@ -16,4 +16,7 @@ version: 2.1
 workflows:
   publish-orbs:
     jobs:
-      - publish
+      - compare-url/reconstruct
+      - publish:
+          requires:
+            - compare-url/reconstruct
