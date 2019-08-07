@@ -1,40 +1,23 @@
-version: 2
 jobs:
-  one:
+  publish:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/circleci-cli
     steps:
       - checkout
-      - run: echo "A first hello"
-      - run: mkdir -p my_workspace
-      - run: echo "Trying out workspaces" > my_workspace/echo-output
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_director
-          root: my_workspace
-          # Must be relative path from root
-          paths:
-            - echo-output      
-  two:
-    docker:
-      - image: circleci/ruby:2.4.1
-    steps:
-      - checkout
-      - run: echo "A more familiar hi"  
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: my_workspace
+      - compare-url/use:
+          attach-workspace: true
+          command: |
 
-      - run: |
-          if [[ $(cat my_workspace/echo-output) == "Trying out workspaces" ]]; then
-            echo "It worked!";
-          else
-            echo "Nope!"; exit 1
-          fi
+                echo "COMMIT_RANGE $COMMIT_RANGE"
+                echo "CIRCLE_COMPARE_URL $CIRCLE_COMPARE_URL"
+          step-name: Publish modified orbs
+orbs:
+  compare-url: iynere/compare-url@1.2.0
+version: 2.1
 workflows:
-  version: 2
-  one_and_two:
+  publish-orbs:
     jobs:
-      - one
-      - two:
+      - compare-url/reconstruct
+      - publish:
           requires:
-            - one
+            - compare-url/reconstruct
