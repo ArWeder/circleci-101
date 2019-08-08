@@ -3,10 +3,9 @@ jobs:
     docker:
       - image: circleci/circleci-cli
     steps:
-      - checkout
       - compare-url/use:
+          attach-workspace: true
           custom-logic: |
-
                 echo "COMMIT_RANGE $COMMIT_RANGE"
                 echo "CIRCLE_COMPARE_URL $CIRCLE_COMPARE_URL"
           step-name: Publish modified orbs
